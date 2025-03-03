@@ -20,7 +20,7 @@ const Hero = () => {
   const router = useRouter();
 
   const onGenerate = async (input) => {
-    console.log("Inside the onGenerate function");
+    console.log("onGenerate triggered");
 
     if (!userDetail) {
       setOpenDialog(true);

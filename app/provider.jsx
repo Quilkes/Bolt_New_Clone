@@ -15,69 +15,67 @@ import { GeminiModelContext } from "./context/GeminiModelContext";
 
 const Provider = ({ children }) => {
   const [messages, setMessages] = useState([]);
-  const [userDetail, setUserDetail] = useState();
-  const [action, setAction] = useState();
-  const [geminiModel, setGeminiModel] = useState();
+  const [userDetail, setUserDetail] = useState(null);
+  const [action, setAction] = useState(null);
+  const [geminiModel, setGeminiModel] = useState(null);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
+
   const convex = useConvex();
   const router = useRouter();
 
   useEffect(() => {
-    IsAuthenticated();
-  }, []);
+    if (!isAuthChecked) {
+      IsAuthenticated();
+      setIsAuthChecked(true);
+    }
+  }, [isAuthChecked]);
 
   const IsAuthenticated = async () => {
-    if (typeof window !== undefined) {
-      const user = JSON.parse(localStorage.getItem("user"));
-      // fetch from database
+    if (typeof window === "undefined") return;
 
-      if (!user) {
-        router.push("/");
-        return;
-      }
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) {
+      router.push("/");
+      return;
+    }
 
-      const result = await convex.query(api.users.GetUser, {
-        email: user?.email,
-      });
-      setUserDetail(result);
+    const user = JSON.parse(storedUser);
+    const result = await convex.query(api.users.GetUser, { email: user.email });
+
+    if (!result) {
+      router.push("/");
+    } else {
+      setUserDetail((prev) => result ?? prev);
       console.log(result);
     }
   };
 
   return (
-    <div>
-      <GoogleOAuthProvider
-        clientId={process.env.NEXT_PUBLIC_GOOGLE_AUTH_CLIENT_ID_KEY}
+    <GoogleOAuthProvider
+      clientId={process.env.NEXT_PUBLIC_GOOGLE_AUTH_CLIENT_ID_KEY}
+    >
+      <PayPalScriptProvider
+        options={{ clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID }}
       >
-        <PayPalScriptProvider
-          options={{ clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID }}
-        >
-          <UserDetailContext.Provider value={{ userDetail, setUserDetail }}>
-            <MessageContext.Provider value={{ messages, setMessages }}>
-              <ActionContext.Provider value={{ action, setAction }}>
-                <GeminiModelContext.Provider
-                  value={{ geminiModel, setGeminiModel }}
-                >
-                  <SidebarProvider
-                    defaultOpen={false}
-                    className="flex flex-col"
-                  >
-                    <Header />
-                    <div className="flex">
-                      <AppSidebar />
-                      <div className="flex-1 overflow-hidden">
-                        {" "}
-                        {/* Main content area */}
-                        {children}
-                      </div>
-                    </div>
-                  </SidebarProvider>
-                </GeminiModelContext.Provider>
-              </ActionContext.Provider>
-            </MessageContext.Provider>
-          </UserDetailContext.Provider>
-        </PayPalScriptProvider>
-      </GoogleOAuthProvider>
-    </div>
+        <UserDetailContext.Provider value={{ userDetail, setUserDetail }}>
+          <MessageContext.Provider value={{ messages, setMessages }}>
+            <ActionContext.Provider value={{ action, setAction }}>
+              <GeminiModelContext.Provider
+                value={{ geminiModel, setGeminiModel }}
+              >
+                <SidebarProvider defaultOpen={false} className="flex flex-col">
+                  <Header />
+                  <div className="flex">
+                    <AppSidebar />
+                    <div className="flex-1 overflow-hidden">{children}</div>
+                  </div>
+                </SidebarProvider>
+              </GeminiModelContext.Provider>
+            </ActionContext.Provider>
+          </MessageContext.Provider>
+        </UserDetailContext.Provider>
+      </PayPalScriptProvider>
+    </GoogleOAuthProvider>
   );
 };
 
