@@ -1,48 +1,109 @@
-"use client"
-import { UserDetailContext } from '@/app/context/UserDetailContext'
-import { api } from '@/convex/_generated/api';
-import { useConvex, useMutation } from 'convex/react';
-import Link from 'next/link';
-import React, { useContext, useEffect, useState } from 'react'
-import { useSidebar } from '../ui/sidebar';
+"use client";
+import { UserDetailContext } from "@/app/context/UserDetailContext";
+import { api } from "@/convex/_generated/api";
+import { useConvex, useMutation } from "convex/react";
+import Link from "next/link";
+import React, { useContext, useEffect, useState } from "react";
+import { useSidebar } from "../ui/sidebar";
 
 function WorkspaceHistory() {
-    const { userDetail, setUserDetail } = useContext(UserDetailContext);
-    const convex = useConvex();
-    const [workspaceList, setWorkspaceList] = useState();
-    const { toggleSidebar } = useSidebar();
+  const { userDetail } = useContext(UserDetailContext);
+  const convex = useConvex();
+  const [groupedWorkspaces, setGroupedWorkspaces] = useState({
+    today: [],
+    yesterday: [],
+    lastWeek: [],
+    older: [],
+  });
+  const { toggleSidebar } = useSidebar();
 
-    useEffect(() => {
+  useEffect(() => {
+    userDetail && GetAllWorkspace();
+  }, [userDetail]);
 
-        userDetail && GetAllWorkspace();
+  const GetAllWorkspace = async () => {
+    const result = await convex.query(api.workspace.GetAllWorkspace, {
+      userId: userDetail._id,
+    });
 
-    }, [userDetail])
+    // Group workspaces by date
+    groupWorkspacesByDate(result);
+  };
 
-    const GetAllWorkspace = async () => {
-        const result = await convex.query(api.workspace.GetAllWorkspace, {
-            userId: userDetail._id
-        });
-        setWorkspaceList(result)
-        // console.log(result);
-    }
+  const groupWorkspacesByDate = (workspaces) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const lastWeekStart = new Date(today);
+    lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+
+    const grouped = {
+      today: [],
+      yesterday: [],
+      lastWeek: [],
+      older: [],
+    };
+
+    workspaces.forEach((workspace) => {
+      // Assuming workspace has a _creationTime field
+      const creationDate = new Date(
+        workspace._creationTime || workspace.messages[0]?.timestamp
+      );
+      creationDate.setHours(0, 0, 0, 0);
+
+      if (creationDate.getTime() === today.getTime()) {
+        grouped.today.push(workspace);
+      } else if (creationDate.getTime() === yesterday.getTime()) {
+        grouped.yesterday.push(workspace);
+      } else if (creationDate.getTime() >= lastWeekStart.getTime()) {
+        grouped.lastWeek.push(workspace);
+      } else {
+        grouped.older.push(workspace);
+      }
+    });
+
+    setGroupedWorkspaces(grouped);
+  };
+
+  const renderWorkspaceGroup = (workspaces, title) => {
+    if (!workspaces || workspaces.length === 0) return null;
 
     return (
-        <div>
-            <h2 className='font-m text-lg'>Your Chats</h2>
-            <div>
-                {
-                    workspaceList && workspaceList.map((workspace, index) => (
-                        <Link href={'/workspace/' + workspace?._id} key={index} >
-                            <h2 onClick={toggleSidebar}
-                                className='text-sm text-gray-400 mt-2 font-light hover:text-white cursor-pointer' >
-                                {workspace?.messages[0]?.content}
-                            </h2>
-                        </Link>
-                    ))
-                }
+      <div className="mb-4">
+        <h3 className="text-xs font-semibold text-gray-700 mb-2">{title}</h3>
+        {workspaces.map((workspace, index) => (
+          <Link href={"/workspace/" + workspace?._id} key={index}>
+            <div className="hover:bg-slate-100 rounded-md px-1 py-1">
+              <h2
+                onClick={toggleSidebar}
+                className="text-base text-gray-700 mt-2 font-light cursor-pointer truncate"
+              >
+                {workspace?.messages[0]?.content}
+              </h2>
             </div>
-        </div>
-    )
+          </Link>
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <div className="pt-2">
+      <h2 className="font-medium text-lg mb-4">Your Recents Chat</h2>
+
+      {renderWorkspaceGroup(groupedWorkspaces.today, "Today")}
+      {renderWorkspaceGroup(groupedWorkspaces.yesterday, "Yesterday")}
+      {renderWorkspaceGroup(groupedWorkspaces.lastWeek, "Last 7 Days")}
+      {renderWorkspaceGroup(groupedWorkspaces.older, "Older")}
+
+      {Object.values(groupedWorkspaces).every(
+        (group) => group.length === 0
+      ) && <p className="text-sm text-gray-700">No chat history found</p>}
+    </div>
+  );
 }
 
-export default WorkspaceHistory
+export default WorkspaceHistory;
