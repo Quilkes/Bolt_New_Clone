@@ -33,10 +33,10 @@ function PricingModel() {
   return (
     <div className="max-w-8xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
-        <h1 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+        <h1 className="text-3xl  text-gray-700 sm:text-4xl">
           Choose Your Token Package
         </h1>
-        <p className="mt-4 text-lg text-gray-500 max-w-2xl mx-auto">
+        <p className="mt-4 text-base text-gray-500 max-w-2xl mx-auto">
           Select the token package that works best for your needs
         </p>
       </div>
@@ -53,16 +53,14 @@ function PricingModel() {
           >
             <div className="p-8 border-b border-gray-100">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-bold text-2xl text-gray-900">
-                  {pricing.name}
-                </h2>
+                <h2 className="text-2xl text-gray-700">{pricing.name}</h2>
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700">
                   {pricing.tokens} tokens
                 </span>
               </div>
               <p className="text-gray-600 text-base mb-6">{pricing.desc}</p>
               <div className="flex items-baseline justify-center mt-8 mb-6">
-                <span className="text-5xl font-extrabold text-gray-900">
+                <span className="text-5xl font-bold text-gray-700">
                   ${pricing.price}
                 </span>
                 <span className="ml-1 text-xl text-gray-500">USD</span>

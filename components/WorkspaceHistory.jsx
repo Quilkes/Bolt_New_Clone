@@ -1,21 +1,26 @@
 "use client";
 import { UserDetailContext } from "@/app/context/UserDetailContext";
 import { api } from "@/convex/_generated/api";
-import { useConvex, useMutation } from "convex/react";
+import useSidebar from "@/store/sidebar";
+import { useConvex } from "convex/react";
 import Link from "next/link";
 import React, { useContext, useEffect, useState } from "react";
-import { useSidebar } from "../ui/sidebar";
 
 function WorkspaceHistory() {
+  const { setSidebar } = useSidebar();
   const { userDetail } = useContext(UserDetailContext);
   const convex = useConvex();
+
   const [groupedWorkspaces, setGroupedWorkspaces] = useState({
     today: [],
     yesterday: [],
     lastWeek: [],
     older: [],
   });
-  const { toggleSidebar } = useSidebar();
+
+  const handleToggleSidebar = () => {
+    setSidebar(false);
+  };
 
   useEffect(() => {
     userDetail && GetAllWorkspace();
@@ -73,13 +78,13 @@ function WorkspaceHistory() {
 
     return (
       <div className="mb-4">
-        <h3 className="text-xs font-semibold text-gray-700 mb-2">{title}</h3>
+        <h3 className="text-xs font-semibold text-gray-400 mb-2">{title}</h3>
         {workspaces.map((workspace, index) => (
           <Link href={"/workspace/" + workspace?._id} key={index}>
-            <div className="hover:bg-slate-100 rounded-md px-1 py-1">
+            <div className="hover:bg-slate-200 rounded-md px-1 py-1">
               <h2
-                onClick={toggleSidebar}
-                className="text-base text-gray-700 mt-2 font-light cursor-pointer truncate"
+                onClick={handleToggleSidebar}
+                className="text-sm text-gray-700 mt-2 cursor-pointer truncate"
               >
                 {workspace?.messages[0]?.content}
               </h2>

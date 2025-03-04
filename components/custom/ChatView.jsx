@@ -2,15 +2,14 @@
 import { MessageContext } from "@/app/context/MessagesContext";
 import { UserDetailContext } from "@/app/context/UserDetailContext";
 import { api } from "@/convex/_generated/api";
-import Colors from "@/data/Colors";
 import Lookup from "@/data/Lookup";
 import Prompt from "@/data/Prompt";
 import axios from "axios";
 import { useConvex, useMutation } from "convex/react";
-import { ArrowRight, Link, Loader2Icon } from "lucide-react";
+import { Send, Link, Loader2Icon } from "lucide-react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
 
@@ -33,6 +32,7 @@ function ChatView() {
   const [loading, setLoading] = useState(false);
   const UpdateMessage = useMutation(api.workspace.UpdateMessage);
   const router = useRouter();
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     id && GetWorkspaceData();
@@ -61,6 +61,10 @@ function ChatView() {
       }
     }
   }, [messages]);
+
+  useEffect(() => {
+    messagesEndRef?.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
 
   const GetAiResponce = async () => {
     setLoading(true);
@@ -108,7 +112,7 @@ function ChatView() {
   };
 
   return (
-    <div className="relative h-[87.5vh] w-full flex flex-col bg-slate-50 rounded-md">
+    <div className="relative h-[87.5vh] w-full flex flex-col bg-slate-50 rounded-md border px-1 pt-1">
       <div className="flex-1 overflow-y-scroll scrollbar-hide rounded-lg">
         {messages?.map((msg, index) => (
           <div
@@ -124,7 +128,7 @@ function ChatView() {
                 alt=""
               />
             )}
-            <ReactMarkdown className="flex flex-col">
+            <ReactMarkdown className="flex text-base flex-col text-slate-700">
               {msg.content}
             </ReactMarkdown>
           </div>
@@ -135,29 +139,30 @@ function ChatView() {
             <Loader2Icon className="animate-spin" />
           </div>
         )}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* input section */}
-      <div className="flex gap-2 items-end">
-        <div className="p-5 border rounded-xl max-w-2xl w-full mt-3 bg-slate-100">
+      <div className=" flex gap-2 items-end">
+        <div className="border p-3 rounded-xl max-w-2xl h-30 w-full mt-2">
           <div className="flex gap-2">
             <textarea
               type="text"
               placeholder={Lookup.INPUT_PLACEHOLDER}
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
-              className="outline-none bg-transparent w-full h-32 max-h-56 resize-none"
+              className="outline-none bg-transparent w-full h-24 resize-none"
             />
             {userInput && (
-              <ArrowRight
+              <Send
                 onClick={() => onGenerate(userInput)}
-                className="bg-blue-500 p-2  h-10 w-10 rounded-md cursor-pointer"
+                className="bg-blue-500 hover:bg-blue-400 p-2  h-8 w-8 rounded-md cursor-pointer"
               />
             )}
           </div>
 
           <div>
-            <Link className="h-5 w-5" />
+            <Link className="h-3 w-3" />
           </div>
         </div>
       </div>

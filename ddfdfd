@@ -1,0 +1,8 @@
+✓ Compiled /api/gen-ai-code in 7.6s (1142 modules)
+ ✓ Compiled (1144 modules)
+ POST /api/ai-chat 200 in 14447ms
+ POST /api/ai-chat 200 in 17003ms
+ POST /api/ai-chat 200 in 18659ms
+ POST /api/gen-ai-code 200 in 29438ms
+ POST /api/gen-ai-code 200 in 51216ms
+ POST /api/gen-ai-code 200 in 67478ms

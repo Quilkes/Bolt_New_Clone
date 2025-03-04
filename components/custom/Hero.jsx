@@ -22,13 +22,14 @@ const Hero = () => {
   const onGenerate = async (input) => {
     console.log("onGenerate triggered");
 
-    if (!userDetail) {
+    if (!userDetail || !userDetail._id) {
       setOpenDialog(true);
-      console.log("No user details");
+      console.log("No user details or user ID missing");
+      return;
     }
 
-    if (userDetail?.token < 10) {
-      toast("You don't have enough token!");
+    if (!userDetail?.token || userDetail.token < 10) {
+      toast("You don't have enough tokens!");
       router.push("/pricing");
       return;
     }
@@ -39,14 +40,11 @@ const Hero = () => {
     };
 
     setMessages([msg]);
-    console.log("userDetail", userDetail);
 
     const workspaceId = await CreateWorkspace({
       user: userDetail?._id,
       messages: [msg],
     });
-
-    console.log("workspaceID----> ", workspaceId);
 
     router.push("/workspace/" + workspaceId);
   };
@@ -80,7 +78,7 @@ const Hero = () => {
                   ease: "easeOut",
                 }}
                 onClick={() => onGenerate(userInput)}
-                className="p-2 text-white h-10 w-10 bg-blue-600 rounded-lg hover:bg-blue-700"
+                className="p-2 text-white h-8 w-8 grid place-content-center bg-blue-600 rounded-lg hover:bg-blue-700"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >

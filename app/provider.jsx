@@ -6,8 +6,7 @@ import { UserDetailContext } from "./context/UserDetailContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/custom/AddSideBar";
+import { AppSidebar } from "@/components/AppSidebar";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { ActionContext } from "./context/ActionContext";
 import { useRouter } from "next/navigation";
@@ -63,13 +62,12 @@ const Provider = ({ children }) => {
               <GeminiModelContext.Provider
                 value={{ geminiModel, setGeminiModel }}
               >
-                <SidebarProvider defaultOpen={false} className="flex flex-col">
-                  <Header />
-                  <div className="flex">
-                    <AppSidebar />
-                    <div className="flex-1 overflow-hidden">{children}</div>
+                <AppSidebar>
+                  <div className="flex flex-col">
+                    <Header />
+                    {children}
                   </div>
-                </SidebarProvider>
+                </AppSidebar>
               </GeminiModelContext.Provider>
             </ActionContext.Provider>
           </MessageContext.Provider>

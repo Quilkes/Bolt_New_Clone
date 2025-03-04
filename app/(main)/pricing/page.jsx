@@ -9,13 +9,11 @@ function page() {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold text-gray-900 tracking-tight">
-            Pricing
-          </h2>
-          <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-500">
+          <h2 className="text-3xl text-gray-700 tracking-tight">Pricing</h2>
+          <p className="mt-4 max-w-2xl mx-auto text-base text-gray-400">
             {Lookup.PRICING_DESC}
           </p>
         </div>
@@ -44,7 +42,7 @@ function page() {
                 <h2 className="text-lg font-medium text-gray-700">
                   Available Balance
                 </h2>
-                <p className="text-3xl font-bold text-gray-900">
+                <p className="text-3xl font-bold text-red-700">
                   {userDetail?.token}{" "}
                   <span className="text-gray-500 text-lg font-normal">
                     Tokens

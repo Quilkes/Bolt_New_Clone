@@ -12,7 +12,7 @@ export default {
   HERO_DESC: "Transform your ideas into reality with AI-powered development.",
   INPUT_PLACEHOLDER: "Describe your project idea...",
   //Rest to be modify
-  SIGNIN_HEADING: "Continue With Bolt.New 2.0",
+  SIGNIN_HEADING: "Continue With Holtex AI",
   SIGNIN_SUBHEADING:
     "To use Holtex AI you must log into an existing account or create one.",
   SIGNIn_AGREEMENT_TEXT:

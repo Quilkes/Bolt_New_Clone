@@ -4,7 +4,6 @@ import {
   SandpackProvider,
   SandpackLayout,
   SandpackCodeEditor,
-  SandpackPreview,
   SandpackFileExplorer,
 } from "@codesandbox/sandpack-react";
 import Lookup from "@/data/Lookup";
@@ -83,7 +82,7 @@ function CodeView() {
 
   return (
     <div className="relative">
-      <div className="bg-slate-50 w-full p-2 border">
+      <div className="bg-slate-50 w-full border rounded-t-lg">
         <div className="flex items-center flex-wrap shrink-0 bg-slate-100 p-1 w-[140px] gap-3 justify-center rounded-full">
           <h2
             onClick={() => setActiveTab("code")}
@@ -128,9 +127,8 @@ function CodeView() {
         </SandpackLayout>
       </SandpackProvider>
       {loading && (
-        <div className="p-10 bg-gray-900 opacity-80 absolute top-0 rounded-lg w-full h-full flex items-center justify-center">
+        <div className="p-10 bg-gray-900 opacity-80 absolute top-0 rounded-b-lg w-full h-full flex items-center justify-center">
           <Loader2Icon className="animate-spin h-10 w-10 text-white" />
-          <h2 className="text-white">Generating your files...</h2>
         </div>
       )}
     </div>
